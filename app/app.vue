@@ -1,4 +1,7 @@
 <script setup>
+import { storeToRefs } from 'pinia'
+import { usePreferencesStore } from '~/stores/preferences'
+
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -11,72 +14,67 @@ useHead({
   }
 })
 
-const title = 'Nuxt Starter Template'
-const description = 'A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours.'
+const title = 'Rick and Morty Directory'
+const description = 'Explore characters, save favorites, and browse details with a fast, responsive interface.'
 
 useSeoMeta({
   title,
   description,
   ogTitle: title,
   ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
+  ogImage: '/favicon.ico',
+  twitterImage: '/favicon.ico',
   twitterCard: 'summary_large_image'
 })
+
+const preferencesStore = usePreferencesStore()
+const { theme } = storeToRefs(preferencesStore)
+
+onMounted(() => {
+  preferencesStore.loadTheme()
+})
+
+watch(theme, (value) => {
+  if (import.meta.client) {
+    document.documentElement.classList.toggle('dark', value === 'dark')
+  }
+}, { immediate: true })
 </script>
 
 <template>
   <UApp>
-    <ClientOnly>
-      <UHeader>
-        <template #left>
-          <NuxtLink to="/">
-            <AppLogo class="w-auto h-6 shrink-0" />
+    <div class="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 transition-colors">
+      <header class="sticky top-0 z-20 border-b border-neutral-200/80 dark:border-neutral-800 bg-white/85 dark:bg-neutral-900/85 backdrop-blur">
+        <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
+          <NuxtLink to="/" class="inline-flex items-center gap-2">
+            <div class="h-8 w-8 rounded-lg bg-primary-500 text-white grid place-content-center font-bold">
+              RM
+            </div>
+            <span class="font-semibold tracking-tight">Character Directory</span>
           </NuxtLink>
 
-          <TemplateMenu />
-        </template>
+          <div class="flex items-center gap-2">
+            <UButton
+              to="/?favorites=1"
+              color="neutral"
+              variant="ghost"
+              icon="i-lucide-heart"
+              label="Favorites"
+            />
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :icon="theme === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'"
+              :label="theme === 'dark' ? 'Light' : 'Dark'"
+              @click="preferencesStore.toggleTheme"
+            />
+          </div>
+        </div>
+      </header>
 
-        <template #right>
-          <UColorModeButton />
-
-          <UButton
-            to="https://github.com/nuxt-ui-templates/starter"
-            target="_blank"
-            icon="i-simple-icons-github"
-            aria-label="GitHub"
-            color="neutral"
-            variant="ghost"
-          />
-        </template>
-      </UHeader>
-    </ClientOnly>
-
-    <UMain>
-      <NuxtPage />
-    </UMain>
-
-    <USeparator icon="i-simple-icons-nuxtdotjs" />
-
-    <ClientOnly>
-      <UFooter>
-        <template #left>
-          <p class="text-sm text-muted">
-            Built with Nuxt UI • © {{ new Date().getFullYear() }}
-          </p>
-        </template>
-
-        <template #right>
-          <UButton
-            to="https://github.com/nuxt-ui-templates/starter"
-            target="_blank"
-            icon="i-simple-icons-github"
-            aria-label="GitHub"
-            color="neutral"
-            variant="ghost"
-          />
-        </template>
-      </UFooter>
-    </ClientOnly>
+      <main class="mx-auto max-w-6xl px-4 py-6 sm:py-8">
+        <NuxtPage />
+      </main>
+    </div>
   </UApp>
 </template>
