@@ -3,16 +3,24 @@ export interface CharacterLocation {
   name: string
 }
 
+export interface CharacterEpisode {
+  id: string
+  name?: string
+  episode?: string
+  air_date?: string
+}
+
 export interface Character {
   id: string
   image: string
   name: string
   species: string
+  type?: string
   status: string
   origin: CharacterLocation
   location: CharacterLocation
   gender: string
-  episode: Array<{ id: string }>
+  episode: CharacterEpisode[]
 }
 
 export interface CharactersInfo {

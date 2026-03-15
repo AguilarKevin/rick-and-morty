@@ -83,10 +83,15 @@ async function requestGraphql<TData>(query: string, variables: Record<string, un
 }
 
 export function useRickAndMortyApi() {
-  const fetchCharacters = async (page: number, name: string) => {
+  const fetchCharacters = async (
+    page: number,
+    name: string,
+    status: string,
+    species: string
+  ) => {
     const query = `
-      query GetCharacters($page: Int!, $name: String) {
-        characters(page: $page, filter: { name: $name }) {
+      query GetCharacters($page: Int!, $name: String, $status: String, $species: String) {
+        characters(page: $page, filter: { name: $name, status: $status, species: $species }) {
           info {
             count
             pages
@@ -98,6 +103,7 @@ export function useRickAndMortyApi() {
             image
             name
             species
+            type
             status
             gender
             origin {
@@ -118,7 +124,9 @@ export function useRickAndMortyApi() {
 
     const data = await requestGraphql<CharactersQueryData>(query, {
       page,
-      name: name || null
+      name: name || null,
+      status: status || null,
+      species: species || null
     })
 
     if (!data.characters) {
@@ -145,6 +153,7 @@ export function useRickAndMortyApi() {
           name
           status
           species
+          type
           gender
           origin {
             id
@@ -156,6 +165,9 @@ export function useRickAndMortyApi() {
           }
           episode {
             id
+            name
+            episode
+            air_date
           }
         }
       }
@@ -182,6 +194,7 @@ export function useRickAndMortyApi() {
           image
           name
           species
+          type
           status
           gender
           origin {
