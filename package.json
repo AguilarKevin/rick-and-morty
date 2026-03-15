@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@iconify-json/heroicons": "^1.2.0",
     "@iconify-json/lucide": "^1.2.96",
     "@iconify-json/simple-icons": "^1.2.72",
     "@pinia/nuxt": "^0.11.2",

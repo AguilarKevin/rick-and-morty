@@ -46,7 +46,10 @@ watch(theme, (value) => {
     <div class="min-h-screen bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-50 transition-colors">
       <header class="sticky top-0 z-20 border-b border-neutral-200/80 dark:border-neutral-800 bg-white/85 dark:bg-neutral-900/85 backdrop-blur">
         <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
-          <NuxtLink to="/" class="inline-flex items-center gap-2">
+          <NuxtLink
+            to="/"
+            class="inline-flex items-center gap-2"
+          >
             <div class="h-8 w-8 rounded-lg bg-primary-500 text-white grid place-content-center font-bold">
               RM
             </div>
@@ -58,14 +61,14 @@ watch(theme, (value) => {
               to="/?favorites=1"
               color="neutral"
               variant="ghost"
-              icon="i-lucide-heart"
+              icon="i-heroicons-heart"
               label="Favorites"
             />
             <UButton
               color="neutral"
               variant="ghost"
-              :icon="theme === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'"
-              :label="theme === 'dark' ? 'Light' : 'Dark'"
+              :icon="theme === 'dark' ? 'i-heroicons-sun' : 'i-heroicons-moon'"
+              :aria-label="theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
               @click="preferencesStore.toggleTheme"
             />
           </div>
