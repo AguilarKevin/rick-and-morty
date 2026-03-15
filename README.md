@@ -1,60 +1,58 @@
-# Nuxt Starter Template
+# Rick and Morty Directory
 
-[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt&labelColor=020420)](https://ui.nuxt.com)
+A Nuxt 4 technical challenge project built with Vue 3 Composition API, Tailwind CSS, Pinia, GraphQL, and Vitest.
 
-Use this template to get started with [Nuxt UI](https://ui.nuxt.com) quickly.
+## Tech Stack
 
-- [Live demo](https://starter-template.nuxt.dev/)
-- [Documentation](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- Nuxt 4 + Vue 3 (`<script setup>`)
+- Tailwind CSS
+- Pinia (global state + `localStorage` persistence)
+- Rick and Morty GraphQL API (`https://rickandmortyapi.com/graphql`)
+- Vitest
 
-<a href="https://starter-template.nuxt.dev/" target="_blank">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png">
-    <img alt="Nuxt Starter Template" src="https://ui.nuxt.com/assets/templates/nuxt/starter-light.png" width="830" height="466">
-  </picture>
-</a>
+## Implemented Features
 
-> The starter template for Vue is on https://github.com/nuxt-ui-templates/starter-vue.
-
-## Quick Start
-
-```bash [Terminal]
-npm create nuxt@latest -- -t ui
-```
-
-## Deploy your own
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-name=starter&repository-url=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fstarter&demo-image=https%3A%2F%2Fui.nuxt.com%2Fassets%2Ftemplates%2Fnuxt%2Fstarter-dark.png&demo-url=https%3A%2F%2Fstarter-template.nuxt.dev%2F&demo-title=Nuxt%20Starter%20Template&demo-description=A%20minimal%20template%20to%20get%20started%20with%20Nuxt%20UI.)
+- Characters table page with:
+  - API pagination (20 per page)
+  - Debounced search by name
+  - Row navigation to character profile
+- Character profile page at `/character/:id` with:
+  - Full detail view
+  - Back navigation preserving page/search/favorites query state
+- Favorites:
+  - Toggle from table and profile
+  - Persisted in `localStorage` via Pinia
+  - Favorites-only filter view
+- Dark/light mode toggle persisted in `localStorage`
+- Unit tests:
+  - `debounce` utility
+  - favorites Pinia store logic
 
 ## Setup
 
-Make sure to install the dependencies:
-
 ```bash
-pnpm install
+npm install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+## Development
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
-## Production
+Runs at `http://localhost:3000`.
 
-Build the application for production:
+## Quality Checks
 
 ```bash
-pnpm build
+npm run test
+npm run lint
+npm run typecheck
 ```
 
-Locally preview production build:
+## Build
 
 ```bash
-pnpm preview
+npm run build
+npm run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
