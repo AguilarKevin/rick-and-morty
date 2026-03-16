@@ -31,7 +31,6 @@ const {
   () => `character:${characterId.value}`,
   () => fetchCharacterById(characterId.value),
   {
-    server: false,
     lazy: true
   }
 )
