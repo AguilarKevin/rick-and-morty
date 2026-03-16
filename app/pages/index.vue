@@ -71,6 +71,21 @@ const updateQuery = (patch: Record<string, string | undefined>) => {
     return accumulator
   }, {})
 
+  const current = Object.entries(route.query).reduce<Record<string, string>>((accumulator, [key, value]) => {
+    if (typeof value === 'string' && value.length > 0) {
+      accumulator[key] = value
+    }
+
+    return accumulator
+  }, {})
+
+  const hasSameQuery = Object.keys(sanitized).length === Object.keys(current).length
+    && Object.entries(sanitized).every(([key, value]) => current[key] === value)
+
+  if (hasSameQuery) {
+    return
+  }
+
   router.push({
     query: sanitized
   })
@@ -113,16 +128,14 @@ const {
   () => `characters:${currentPage.value}:${search.value}:${status.value}:${species.value}`,
   () => fetchCharacters(currentPage.value, search.value, status.value, species.value),
   {
-    watch: [currentPage, search, status, species],
     server: false
   }
 )
 
 const { data: favoritesData } = await useAsyncData(
   () => `favorites:${favoritesOnly.value ? favoriteIds.value.join(',') : 'inactive'}`,
-  () => favoritesOnly.value ? fetchCharactersByIds(favoriteIds.value) : [],
+  async () => favoritesOnly.value ? fetchCharactersByIds(favoriteIds.value) : [],
   {
-    watch: [favoriteIds, favoritesOnly],
     server: false
   }
 )
@@ -186,6 +199,20 @@ const toggleFavoritesFilter = () => {
   updateQuery({
     favorites: favoritesOnly.value ? undefined : '1',
     page: '1'
+  })
+}
+
+const hasActiveFilters = computed(() => (
+  Boolean(search.value || species.value || status.value || favoritesOnly.value)
+))
+
+const clearFilters = () => {
+  updateQuery({
+    search: undefined,
+    species: undefined,
+    status: undefined,
+    favorites: undefined,
+    page: undefined
   })
 }
 
@@ -272,10 +299,19 @@ const favoriteIconClass = (id: string) => (
           placeholder="Filter by status"
         />
       </div>
-      <div class="mt-2">
+      <div class="mt-3 flex items-center justify-between gap-3">
         <p class="text-xs text-neutral-500 dark:text-neutral-400 sm:text-sm">
           {{ totalCount }} result{{ totalCount === 1 ? '' : 's' }}
         </p>
+        <UButton
+          color="neutral"
+          variant="ghost"
+          size="xs"
+          icon="i-heroicons-x-mark"
+          label="Clear filters"
+          :disabled="!hasActiveFilters"
+          @click="clearFilters"
+        />
       </div>
     </UCard>
 
@@ -312,6 +348,7 @@ const favoriteIconClass = (id: string) => (
                   <img
                     :src="character.image"
                     :alt="character.name"
+                    loading="lazy"
                     class="h-10 w-10 rounded-full object-cover"
                   >
                   <div>
@@ -382,6 +419,7 @@ const favoriteIconClass = (id: string) => (
                       <img
                         :src="character.image"
                         :alt="character.name"
+                        loading="lazy"
                         class="h-10 w-10 rounded-full object-cover"
                       >
                       <span class="font-medium">{{ character.name }}</span>
@@ -437,6 +475,7 @@ const favoriteIconClass = (id: string) => (
                 <img
                   :src="character.image"
                   :alt="character.name"
+                  loading="lazy"
                   class="h-12 w-12 rounded-lg object-cover"
                 >
                 <div>
