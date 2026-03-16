@@ -15,8 +15,9 @@
     "@iconify-json/heroicons": "^1.2.0",
     "@iconify-json/lucide": "^1.2.96",
     "@iconify-json/simple-icons": "^1.2.72",
-    "@pinia/nuxt": "^0.11.2",
+    "@nuxt/image": "^1.10.0",
     "@nuxt/ui": "^4.5.1",
+    "@pinia/nuxt": "^0.11.2",
     "nuxt": "^4.3.1",
     "pinia": "^3.0.3",
     "tailwindcss": "^4.2.1"
