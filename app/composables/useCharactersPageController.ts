@@ -77,9 +77,20 @@ export function useCharactersPageController() {
   })
 
   const openCharacter = (id: string) => {
+    if (import.meta.client) {
+      const preservedQuery = Object.entries(route.query).reduce<Record<string, string>>((accumulator, [key, value]) => {
+        if (typeof value === 'string' && value.length > 0) {
+          accumulator[key] = value
+        }
+
+        return accumulator
+      }, {})
+
+      sessionStorage.setItem('rm-characters-back-query', JSON.stringify(preservedQuery))
+    }
+
     navigateTo({
-      path: `/character/${id}`,
-      query: route.query
+      path: `/character/${id}`
     })
   }
 

@@ -47,19 +47,28 @@ const favoriteIcon = (id: string) => (
         </thead>
         <tbody>
           <tr
-            v-for="character in characters"
+            v-for="(character, index) in characters"
             :key="character.id"
+            role="button"
+            tabindex="0"
+            :aria-label="`Open ${character.name} details`"
             class="cursor-pointer border-b border-neutral-100 transition-all duration-200 hover:bg-primary-500/10 hover:shadow-[inset_0_0_0_1px_rgba(34,211,238,0.4),0_0_24px_rgba(16,185,129,0.25)] dark:border-neutral-900 dark:hover:bg-primary-400/10"
             @mouseenter="emit('prefetchCharacter', character.id)"
             @touchstart.passive="emit('prefetchCharacter', character.id)"
             @click="emit('openCharacter', character.id)"
+            @keydown.enter.prevent="emit('openCharacter', character.id)"
+            @keydown.space.prevent="emit('openCharacter', character.id)"
           >
             <td class="px-3 py-3">
               <div class="flex items-center gap-3">
                 <img
                   :src="character.image"
-                  :alt="character.name"
-                  loading="lazy"
+                  :alt="`Portrait of ${character.name}`"
+                  :loading="index === 0 ? 'eager' : 'lazy'"
+                  :fetchpriority="index === 0 ? 'high' : 'auto'"
+                  decoding="async"
+                  width="40"
+                  height="40"
                   class="h-10 w-10 rounded-full object-cover"
                 >
                 <span class="font-medium">{{ character.name }}</span>
@@ -103,10 +112,11 @@ const favoriteIcon = (id: string) => (
     class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
   >
     <article
-      v-for="character in characters"
+      v-for="(character, index) in characters"
       :key="character.id"
       role="button"
       tabindex="0"
+      :aria-label="`Open ${character.name} details`"
       class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan-400/70 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.45),0_0_28px_rgba(16,185,129,0.35)] dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-cyan-300/70"
       @mouseenter="emit('prefetchCharacter', character.id)"
       @focus="emit('prefetchCharacter', character.id)"
@@ -120,8 +130,12 @@ const favoriteIcon = (id: string) => (
         <div class="flex items-center gap-3">
           <img
             :src="character.image"
-            :alt="character.name"
-            loading="lazy"
+            :alt="`Portrait of ${character.name}`"
+            :loading="index === 0 ? 'eager' : 'lazy'"
+            :fetchpriority="index === 0 ? 'high' : 'auto'"
+            decoding="async"
+            width="48"
+            height="48"
             class="h-12 w-12 rounded-lg object-cover"
           >
           <div>

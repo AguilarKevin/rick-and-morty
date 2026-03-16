@@ -6,6 +6,7 @@ import { speciesBadgeColor, statusBadgeColor } from '~/utils/characterBadgeColor
 const route = useRoute()
 const favoritesStore = useFavoritesStore()
 const { fetchCharacterById } = useRickAndMortyApi()
+const preservedBackQuery = ref<Record<string, string>>({})
 const imageLoadingStates = ref({
   cover: true,
   avatar: true
@@ -13,6 +14,27 @@ const imageLoadingStates = ref({
 
 onMounted(() => {
   favoritesStore.loadFromStorage()
+
+  const saved = sessionStorage.getItem('rm-characters-back-query')
+  if (!saved) {
+    return
+  }
+
+  try {
+    const parsed = JSON.parse(saved)
+    if (parsed && typeof parsed === 'object') {
+      preservedBackQuery.value = Object.entries(parsed).reduce<Record<string, string>>((accumulator, [key, value]) => {
+        if (typeof value === 'string' && value.length > 0) {
+          accumulator[key] = value
+        }
+
+        return accumulator
+      }, {})
+    }
+  }
+  catch {
+    preservedBackQuery.value = {}
+  }
 })
 
 const characterId = computed(() => String(route.params.id))
@@ -36,7 +58,9 @@ const {
 )
 
 const backQuery = computed(() => {
-  const query: Record<string, string> = {}
+  const query: Record<string, string> = {
+    ...preservedBackQuery.value
+  }
 
   if (typeof route.query.page === 'string') {
     query.page = route.query.page
@@ -100,7 +124,8 @@ const backQuery = computed(() => {
             height="480"
             sizes="100vw md:896px"
             format="webp"
-            loading="lazy"
+            loading="eager"
+            fetchpriority="high"
             :class="[
               'absolute inset-0 h-full w-full object-cover transition-opacity duration-300',
               imageLoadingStates.cover ? 'opacity-0' : 'opacity-100'
@@ -123,12 +148,12 @@ const backQuery = computed(() => {
                   />
                   <NuxtImg
                     :src="character.image"
-                    :alt="character.name"
+                    :alt="`${character.name} portrait`"
                     width="144"
                     height="144"
                     sizes="112px sm:144px"
                     format="webp"
-                    loading="lazy"
+                    loading="eager"
                     :class="[
                       'absolute inset-0 h-full w-full rounded-2xl border-4 border-white object-cover shadow-xl transition-opacity duration-300 dark:border-neutral-900',
                       imageLoadingStates.avatar ? 'opacity-0' : 'opacity-100'

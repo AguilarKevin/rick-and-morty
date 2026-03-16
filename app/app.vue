@@ -7,7 +7,9 @@ useHead({
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
   ],
   link: [
-    { rel: 'icon', href: '/favicon.ico' }
+    { rel: 'icon', href: '/favicon.ico' },
+    { rel: 'preconnect', href: 'https://rickandmortyapi.com', crossorigin: '' },
+    { rel: 'dns-prefetch', href: '//rickandmortyapi.com' }
   ],
   htmlAttrs: {
     lang: 'en'
