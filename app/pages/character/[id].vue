@@ -6,9 +6,9 @@ import { speciesBadgeColor, statusBadgeColor } from '~/utils/characterBadgeColor
 const route = useRoute()
 const favoritesStore = useFavoritesStore()
 const { fetchCharacterById } = useRickAndMortyApi()
-const failedImageStates = ref({
-  cover: false,
-  avatar: false
+const imageLoadingStates = ref({
+  cover: true,
+  avatar: true
 })
 
 onMounted(() => {
@@ -16,6 +16,12 @@ onMounted(() => {
 })
 
 const characterId = computed(() => String(route.params.id))
+watch(characterId, () => {
+  imageLoadingStates.value = {
+    cover: true,
+    avatar: true
+  }
+})
 
 const {
   data: character,
@@ -24,7 +30,10 @@ const {
 } = await useAsyncData(
   () => `character:${characterId.value}`,
   () => fetchCharacterById(characterId.value),
-  {}
+  {
+    server: false,
+    lazy: true
+  }
 )
 
 const backQuery = computed(() => {
@@ -81,15 +90,11 @@ const backQuery = computed(() => {
         class="-m-6"
       >
         <div class="relative h-52 sm:h-64 md:h-72">
-          <img
-            v-if="failedImageStates.cover"
-            :src="character.image"
-            :alt="`${character.name} cover`"
-            loading="lazy"
-            class="absolute inset-0 h-full w-full object-cover"
-          >
+          <div
+            v-if="imageLoadingStates.cover"
+            class="absolute inset-0 animate-pulse bg-neutral-200 dark:bg-neutral-800"
+          />
           <NuxtImg
-            v-else
             :src="character.image"
             :alt="`${character.name} cover`"
             width="1200"
@@ -97,8 +102,12 @@ const backQuery = computed(() => {
             sizes="100vw md:896px"
             format="webp"
             loading="lazy"
-            class="absolute inset-0 h-full w-full object-cover"
-            @error="failedImageStates.cover = true"
+            :class="[
+              'absolute inset-0 h-full w-full object-cover transition-opacity duration-300',
+              imageLoadingStates.cover ? 'opacity-0' : 'opacity-100'
+            ]"
+            @load="imageLoadingStates.cover = false"
+            @error="imageLoadingStates.cover = false"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
           <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.25),transparent_50%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.2),transparent_45%)]" />
@@ -108,25 +117,27 @@ const backQuery = computed(() => {
           <div class="relative -mt-12 sm:-mt-16">
             <div class="flex flex-wrap items-end justify-between gap-4">
               <div class="flex items-end gap-4">
-                <img
-                  v-if="failedImageStates.avatar"
-                  :src="character.image"
-                  :alt="character.name"
-                  loading="lazy"
-                  class="h-28 w-28 rounded-2xl border-4 border-white object-cover shadow-xl dark:border-neutral-900 sm:h-36 sm:w-36"
-                >
-                <NuxtImg
-                  v-else
-                  :src="character.image"
-                  :alt="character.name"
-                  width="144"
-                  height="144"
-                  sizes="112px sm:144px"
-                  format="webp"
-                  loading="lazy"
-                  class="h-28 w-28 rounded-2xl border-4 border-white object-cover shadow-xl dark:border-neutral-900 sm:h-36 sm:w-36"
-                  @error="failedImageStates.avatar = true"
-                />
+                <div class="relative h-28 w-28 sm:h-36 sm:w-36">
+                  <div
+                    v-if="imageLoadingStates.avatar"
+                    class="absolute inset-0 animate-pulse rounded-2xl border-4 border-white bg-neutral-200 dark:border-neutral-900 dark:bg-neutral-800"
+                  />
+                  <NuxtImg
+                    :src="character.image"
+                    :alt="character.name"
+                    width="144"
+                    height="144"
+                    sizes="112px sm:144px"
+                    format="webp"
+                    loading="lazy"
+                    :class="[
+                      'absolute inset-0 h-full w-full rounded-2xl border-4 border-white object-cover shadow-xl transition-opacity duration-300 dark:border-neutral-900',
+                      imageLoadingStates.avatar ? 'opacity-0' : 'opacity-100'
+                    ]"
+                    @load="imageLoadingStates.avatar = false"
+                    @error="imageLoadingStates.avatar = false"
+                  />
+                </div>
                 <div class="pt-2 sm:pt-3">
                   <h1 class="text-2xl font-semibold tracking-tight text-neutral-900 drop-shadow sm:text-3xl dark:text-white">
                     {{ character.name }}
