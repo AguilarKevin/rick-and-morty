@@ -4,14 +4,16 @@ import { debounce } from '~/utils/debounce'
 export function useCharactersQueryController(preferencesStore: ReturnType<typeof usePreferencesStore>) {
   const route = useRoute()
   const router = useRouter()
+  const isValidPageQuery = (value: unknown): value is string => (
+    typeof value === 'string' && /^[1-9]\d*$/.test(value)
+  )
 
   const searchInput = ref(typeof route.query.search === 'string' ? route.query.search : '')
   const speciesInput = ref(typeof route.query.species === 'string' ? route.query.species : '')
   const statusInput = ref(typeof route.query.status === 'string' ? route.query.status : 'all')
 
   const currentPage = computed(() => {
-    const raw = Number(route.query.page ?? 1)
-    return Number.isFinite(raw) && raw > 0 ? raw : 1
+    return isValidPageQuery(route.query.page) ? Number(route.query.page) : 1
   })
 
   const search = computed(() => (
@@ -142,6 +144,16 @@ export function useCharactersQueryController(preferencesStore: ReturnType<typeof
       layout: mode
     })
   }
+
+  watch(() => route.query.page, (pageValue) => {
+    if (pageValue === undefined || isValidPageQuery(pageValue)) {
+      return
+    }
+
+    updateQuery({
+      page: undefined
+    })
+  }, { immediate: true })
 
   const hasActiveFilters = computed(() => (
     Boolean(search.value || species.value || status.value || favoritesOnly.value)
