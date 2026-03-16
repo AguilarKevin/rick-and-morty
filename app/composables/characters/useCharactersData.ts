@@ -75,11 +75,20 @@ export function useCharactersData(options: UseCharactersDataOptions) {
 
   const visiblePages = computed(() => {
     const pages = totalPages.value
+    const maxVisiblePages = 5
+
+    if (pages < 1) {
+      return []
+    }
+
     const page = currentPage.value
-    const radius = 2
-    const start = Math.max(1, page - radius)
-    const end = Math.min(pages, page + radius)
-    return Array.from({ length: Math.max(0, end - start + 1) }, (_, index) => start + index)
+    const start = Math.min(
+      Math.max(page - Math.floor(maxVisiblePages / 2), 1),
+      Math.max(pages - maxVisiblePages + 1, 1)
+    )
+    const length = Math.min(maxVisiblePages, pages)
+
+    return Array.from({ length }, (_, index) => start + index)
   })
 
   return {

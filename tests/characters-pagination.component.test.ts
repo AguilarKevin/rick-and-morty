@@ -9,7 +9,7 @@ const UButtonStub = defineComponent({
   props: {
     label: {
       type: String,
-      required: true
+      default: ''
     },
     disabled: {
       type: Boolean,
@@ -37,7 +37,7 @@ describe('CharactersPagination', () => {
 
     const buttons = wrapper.findAll('button')
     const pageThree = buttons.find(button => button.text() === '3')
-    const next = buttons.find(button => button.text() === 'Next')
+    const next = buttons.find(button => button.attributes('aria-label') === 'Next page')
 
     expect(pageThree).toBeDefined()
     expect(next).toBeDefined()
@@ -63,8 +63,8 @@ describe('CharactersPagination', () => {
     })
 
     const firstButtons = firstPage.findAll('button')
-    expect(firstButtons.find(button => button.text() === 'Previous')?.attributes('disabled')).toBeDefined()
-    expect(firstButtons.find(button => button.text() === 'Next')?.attributes('disabled')).toBeUndefined()
+    expect(firstButtons.find(button => button.attributes('aria-label') === 'Previous page')?.attributes('disabled')).toBeDefined()
+    expect(firstButtons.find(button => button.attributes('aria-label') === 'Next page')?.attributes('disabled')).toBeUndefined()
 
     const lastPage = mount(CharactersPagination, {
       props: {
@@ -80,7 +80,7 @@ describe('CharactersPagination', () => {
     })
 
     const lastButtons = lastPage.findAll('button')
-    expect(lastButtons.find(button => button.text() === 'Previous')?.attributes('disabled')).toBeUndefined()
-    expect(lastButtons.find(button => button.text() === 'Next')?.attributes('disabled')).toBeDefined()
+    expect(lastButtons.find(button => button.attributes('aria-label') === 'Previous page')?.attributes('disabled')).toBeUndefined()
+    expect(lastButtons.find(button => button.attributes('aria-label') === 'Next page')?.attributes('disabled')).toBeDefined()
   })
 })

@@ -17,7 +17,8 @@ const emit = defineEmits<{
     <UButton
       color="neutral"
       variant="outline"
-      label="Previous"
+      icon="i-heroicons-chevron-left"
+      aria-label="Previous page"
       :disabled="currentPage <= 1"
       @click="emit('goToPage', currentPage - 1)"
     />
@@ -34,7 +35,8 @@ const emit = defineEmits<{
     <UButton
       color="neutral"
       variant="outline"
-      label="Next"
+      icon="i-heroicons-chevron-right"
+      aria-label="Next page"
       :disabled="currentPage >= totalPages"
       @click="emit('goToPage', currentPage + 1)"
     />
