@@ -58,13 +58,6 @@ watch(theme, (value) => {
 
           <div class="flex items-center gap-2">
             <UButton
-              to="/?favorites=1"
-              color="neutral"
-              variant="ghost"
-              icon="i-heroicons-heart"
-              label="Favorites"
-            />
-            <UButton
               color="neutral"
               variant="ghost"
               :icon="theme === 'dark' ? 'i-heroicons-sun' : 'i-heroicons-moon'"
