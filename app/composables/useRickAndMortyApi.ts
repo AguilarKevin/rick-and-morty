@@ -1,4 +1,10 @@
 import type { Character, CharactersResponse } from '~/types/character'
+import { print, type DocumentNode } from 'graphql'
+import {
+  GET_CHARACTER_QUERY,
+  GET_CHARACTERS_BY_IDS_QUERY,
+  GET_CHARACTERS_QUERY
+} from '~/graphql/queries'
 
 const API_URL = 'https://rickandmortyapi.com/graphql'
 const CACHE_TTL_MS = 1000 * 60 * 2
@@ -47,7 +53,8 @@ function isRateLimitError(error: unknown) {
     || /429|too many requests/i.test(candidate.message ?? '')
 }
 
-async function requestGraphql<TData>(query: string, variables: Record<string, unknown>) {
+async function requestGraphql<TData>(document: DocumentNode, variables: Record<string, unknown>) {
+  const query = print(document)
   const key = JSON.stringify({ query, variables })
   const now = Date.now()
 
@@ -113,40 +120,7 @@ export function useRickAndMortyApi() {
     status: string,
     species: string
   ) => {
-    const query = `
-      query GetCharacters($page: Int!, $name: String, $status: String, $species: String) {
-        characters(page: $page, filter: { name: $name, status: $status, species: $species }) {
-          info {
-            count
-            pages
-            next
-            prev
-          }
-          results {
-            id
-            image
-            name
-            species
-            type
-            status
-            gender
-            origin {
-              id
-              name
-            }
-            location {
-              id
-              name
-            }
-            episode {
-              id
-            }
-          }
-        }
-      }
-    `
-
-    const data = await requestGraphql<CharactersQueryData>(query, {
+    const data = await requestGraphql<CharactersQueryData>(GET_CHARACTERS_QUERY, {
       page,
       name: name || null,
       status: status || null,
@@ -169,35 +143,7 @@ export function useRickAndMortyApi() {
   }
 
   const fetchCharacterById = async (id: string) => {
-    const query = `
-      query GetCharacter($id: ID!) {
-        character(id: $id) {
-          id
-          image
-          name
-          status
-          species
-          type
-          gender
-          origin {
-            id
-            name
-          }
-          location {
-            id
-            name
-          }
-          episode {
-            id
-            name
-            episode
-            air_date
-          }
-        }
-      }
-    `
-
-    const data = await requestGraphql<CharacterQueryData>(query, { id })
+    const data = await requestGraphql<CharacterQueryData>(GET_CHARACTER_QUERY, { id })
 
     if (!data.character) {
       throw new Error('Character not found')
@@ -211,32 +157,7 @@ export function useRickAndMortyApi() {
       return [] as Character[]
     }
 
-    const query = `
-      query GetCharactersByIds($ids: [ID!]!) {
-        charactersByIds(ids: $ids) {
-          id
-          image
-          name
-          species
-          type
-          status
-          gender
-          origin {
-            id
-            name
-          }
-          location {
-            id
-            name
-          }
-          episode {
-            id
-          }
-        }
-      }
-    `
-
-    const data = await requestGraphql<CharactersByIdsQueryData>(query, { ids })
+    const data = await requestGraphql<CharactersByIdsQueryData>(GET_CHARACTERS_BY_IDS_QUERY, { ids })
 
     return data.charactersByIds ?? []
   }
