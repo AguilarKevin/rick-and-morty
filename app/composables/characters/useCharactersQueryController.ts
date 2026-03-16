@@ -35,22 +35,18 @@ export function useCharactersQueryController(preferencesStore: ReturnType<typeof
     return preferencesStore.layout
   })
 
-  watch(search, (value) => {
-    if (value !== searchInput.value) {
-      searchInput.value = value
+  watch([search, species, status], ([searchValue, speciesValue, statusValue]) => {
+    if (searchValue !== searchInput.value) {
+      searchInput.value = searchValue
     }
-  }, { immediate: true })
 
-  watch(species, (value) => {
-    if (value !== speciesInput.value) {
-      speciesInput.value = value
+    if (speciesValue !== speciesInput.value) {
+      speciesInput.value = speciesValue
     }
-  }, { immediate: true })
 
-  watch(status, (value) => {
-    const normalized = value || 'all'
-    if (normalized !== statusInput.value) {
-      statusInput.value = normalized
+    const normalizedStatus = statusValue || 'all'
+    if (normalizedStatus !== statusInput.value) {
+      statusInput.value = normalizedStatus
     }
   }, { immediate: true })
 
@@ -96,17 +92,10 @@ export function useCharactersQueryController(preferencesStore: ReturnType<typeof
     })
   }, 350)
 
-  watch(searchInput, (value) => {
+  watch([searchInput, speciesInput], ([searchValue, speciesValue]) => {
     applyFilters({
-      search: value,
-      species: speciesInput.value
-    })
-  })
-
-  watch(speciesInput, (value) => {
-    applyFilters({
-      search: searchInput.value,
-      species: value
+      search: searchValue,
+      species: speciesValue
     })
   })
 
