@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import type { Character, CharactersResponse } from '~/types/character'
 
 interface UseCharactersDataOptions {
   currentPage: Ref<number>
@@ -7,8 +8,8 @@ interface UseCharactersDataOptions {
   species: Ref<string>
   favoritesOnly: Ref<boolean>
   favoriteIds: Ref<string[]>
-  fetchCharacters: (page: number, name: string, status: string, species: string) => Promise<unknown>
-  fetchCharactersByIds: (ids: string[]) => Promise<unknown[]>
+  fetchCharacters: (page: number, name: string, status: string, species: string) => Promise<CharactersResponse>
+  fetchCharactersByIds: (ids: string[]) => Promise<Character[]>
 }
 
 export function useCharactersData(options: UseCharactersDataOptions) {
@@ -27,15 +28,15 @@ export function useCharactersData(options: UseCharactersDataOptions) {
     data: charactersResponse,
     pending,
     error
-  } = useAsyncData(
+  } = useAsyncData<CharactersResponse>(
     () => `characters:${currentPage.value}:${search.value}:${status.value}:${species.value}`,
-    () => fetchCharacters(currentPage.value, search.value, status.value, species.value) as Promise<{ info?: { count?: number, pages?: number }, results?: unknown[] }>,
+    () => fetchCharacters(currentPage.value, search.value, status.value, species.value),
     {
       server: false
     }
   )
 
-  const { data: favoritesData } = useAsyncData(
+  const { data: favoritesData } = useAsyncData<Character[]>(
     () => `favorites:${favoritesOnly.value ? favoriteIds.value.join(',') : 'inactive'}`,
     async () => favoritesOnly.value ? fetchCharactersByIds(favoriteIds.value) : [],
     {

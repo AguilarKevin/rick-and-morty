@@ -37,7 +37,6 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4",
-    "vue-router": "^4.5.1",
     "vue-tsc": "^3.2.5"
   }
 }

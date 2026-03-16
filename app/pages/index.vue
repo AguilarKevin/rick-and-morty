@@ -2,6 +2,7 @@
 const {
   characters,
   clearFilters,
+  currentPage,
   error,
   favoriteIconClass,
   favoritesOnly,
