@@ -182,35 +182,35 @@ const backQuery = computed(() => {
                 Identity
               </h2>
               <dl class="mt-3 space-y-3 text-sm">
-                <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                   <dt class="text-neutral-500 dark:text-neutral-400">
                     Status
                   </dt>
-                  <dd class="font-medium">
+                  <dd class="mt-1 font-medium sm:mt-0">
                     {{ character.status }}
                   </dd>
                 </div>
-                <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                   <dt class="text-neutral-500 dark:text-neutral-400">
                     Species
                   </dt>
-                  <dd class="font-medium">
+                  <dd class="mt-1 font-medium sm:mt-0">
                     {{ character.species }}
                   </dd>
                 </div>
-                <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                   <dt class="text-neutral-500 dark:text-neutral-400">
                     Type (sub-species)
                   </dt>
-                  <dd class="font-medium">
+                  <dd class="mt-1 font-medium sm:mt-0">
                     {{ character.type || 'Not specified' }}
                   </dd>
                 </div>
-                <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                   <dt class="text-neutral-500 dark:text-neutral-400">
                     Gender
                   </dt>
-                  <dd class="font-medium">
+                  <dd class="mt-1 font-medium sm:mt-0">
                     {{ character.gender }}
                   </dd>
                 </div>
@@ -222,27 +222,27 @@ const backQuery = computed(() => {
                 Origins
               </h2>
               <dl class="mt-3 space-y-3 text-sm">
-                <div>
+                <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                   <dt class="text-neutral-500 dark:text-neutral-400">
                     Origin
                   </dt>
-                  <dd class="mt-1 font-medium">
+                  <dd class="mt-1 font-medium sm:mt-0">
                     {{ character.origin.name }}
                   </dd>
                 </div>
-                <div>
+                <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                   <dt class="text-neutral-500 dark:text-neutral-400">
                     Last known location
                   </dt>
-                  <dd class="mt-1 font-medium">
+                  <dd class="mt-1 font-medium sm:mt-0">
                     {{ character.location.name }}
                   </dd>
                 </div>
-                <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-col items-start gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                   <dt class="text-neutral-500 dark:text-neutral-400">
                     Episode appearances
                   </dt>
-                  <dd class="font-medium">
+                  <dd class="mt-1 font-medium sm:mt-0">
                     {{ character.episode.length }}
                   </dd>
                 </div>
