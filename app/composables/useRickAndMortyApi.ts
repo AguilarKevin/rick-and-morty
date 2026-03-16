@@ -1,4 +1,4 @@
-import type { Character, CharactersResponse } from '~/types/character'
+import type { Character, CharacterListItem, CharactersResponse } from '~/types/character'
 import { print, type DocumentNode } from 'graphql'
 import {
   GET_CHARACTER_QUERY,
@@ -6,9 +6,7 @@ import {
   GET_CHARACTERS_QUERY
 } from '~/graphql/queries'
 
-const API_URL = 'https://rickandmortyapi.com/graphql'
-const CACHE_TTL_MS = 1000 * 60 * 2
-const responseCache = new Map<string, { value: unknown, expiresAt: number }>()
+const API_URL = '/api/graphql'
 const inFlightRequests = new Map<string, Promise<unknown>>()
 const RATE_LIMIT_RETRY_DELAYS = [800, 1600, 3000]
 
@@ -26,7 +24,7 @@ interface CharacterQueryData {
 }
 
 interface CharactersByIdsQueryData {
-  charactersByIds: Character[] | null
+  charactersByIds: CharacterListItem[] | null
 }
 
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
@@ -56,16 +54,6 @@ function isRateLimitError(error: unknown) {
 async function requestGraphql<TData>(document: DocumentNode, variables: Record<string, unknown>) {
   const query = print(document)
   const key = JSON.stringify({ query, variables })
-  const now = Date.now()
-
-  const cached = responseCache.get(key)
-  if (cached) {
-    if (cached.expiresAt > now) {
-      return cached.value as TData
-    }
-
-    responseCache.delete(key)
-  }
 
   if (inFlightRequests.has(key)) {
     return inFlightRequests.get(key) as Promise<TData>
@@ -90,10 +78,6 @@ async function requestGraphql<TData>(document: DocumentNode, variables: Record<s
           throw new Error('No data returned from API')
         }
 
-        responseCache.set(key, {
-          value: response.data,
-          expiresAt: Date.now() + CACHE_TTL_MS
-        })
         return response.data
       } catch (error) {
         if (isRateLimitError(error) && attempt < RATE_LIMIT_RETRY_DELAYS.length) {
@@ -154,7 +138,7 @@ export function useRickAndMortyApi() {
 
   const fetchCharactersByIds = async (ids: string[]) => {
     if (!ids.length) {
-      return [] as Character[]
+      return [] as CharacterListItem[]
     }
 
     const data = await requestGraphql<CharactersByIdsQueryData>(GET_CHARACTERS_BY_IDS_QUERY, { ids })
