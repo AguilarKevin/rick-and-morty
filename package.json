@@ -27,10 +27,13 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.4",
+    "@vue/test-utils": "^2.4.6",
     "@nuxt/eslint": "^1.15.2",
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^10.0.3",
     "get-graphql-schema": "^2.1.2",
+    "jsdom": "^26.1.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4",
