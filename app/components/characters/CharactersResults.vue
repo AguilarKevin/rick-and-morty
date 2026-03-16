@@ -23,59 +23,8 @@ const favoriteIcon = (id: string) => (
 
 <template>
   <template v-if="layoutMode === 'table'">
-    <div class="space-y-2 md:hidden">
-      <button
-        v-for="character in characters"
-        :key="character.id"
-        type="button"
-        class="w-full rounded-xl border border-neutral-200 p-3 text-left transition-all duration-200 hover:border-cyan-400/70 hover:bg-primary-500/10 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.35),0_0_20px_rgba(16,185,129,0.2)] dark:border-neutral-800 dark:hover:border-cyan-300/70 dark:hover:bg-primary-400/10"
-        @click="emit('openCharacter', character.id)"
-      >
-        <div class="flex items-start justify-between gap-3">
-          <div class="flex items-center gap-3">
-            <img
-              :src="character.image"
-              :alt="character.name"
-              loading="lazy"
-              class="h-10 w-10 rounded-full object-cover"
-            >
-            <div>
-              <p class="font-medium">
-                {{ character.name }}
-              </p>
-              <p class="text-xs text-neutral-500 dark:text-neutral-400">
-                {{ character.origin.name }}
-              </p>
-            </div>
-          </div>
-          <UButton
-            color="neutral"
-            variant="ghost"
-            :icon="favoriteIcon(character.id)"
-            :aria-label="isFavorite(character.id) ? 'Remove from favorites' : 'Add to favorites'"
-            :class="favoriteIconClass(character.id)"
-            @click.stop="emit('toggleFavorite', character.id)"
-          />
-        </div>
-        <div class="mt-2 flex flex-wrap items-center gap-2">
-          <UBadge
-            :label="character.species"
-            variant="soft"
-            size="xs"
-            :color="speciesBadgeColor(character.species)"
-          />
-          <UBadge
-            :label="character.status"
-            variant="soft"
-            size="xs"
-            :color="statusBadgeColor(character.status)"
-          />
-        </div>
-      </button>
-    </div>
-
-    <div class="hidden overflow-x-auto md:block">
-      <table class="w-full text-left text-sm">
+    <div class="overflow-x-auto">
+      <table class="min-w-[720px] w-full text-left text-sm">
         <thead class="text-neutral-500 dark:text-neutral-300">
           <tr class="border-b border-neutral-200 dark:border-neutral-800">
             <th class="px-3 py-2 font-medium">
