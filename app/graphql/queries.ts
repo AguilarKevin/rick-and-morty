@@ -14,19 +14,9 @@ export const GET_CHARACTERS_QUERY = gql`
         image
         name
         species
-        type
         status
-        gender
         origin {
-          id
           name
-        }
-        location {
-          id
-          name
-        }
-        episode {
-          id
         }
       }
     }
@@ -68,19 +58,9 @@ export const GET_CHARACTERS_BY_IDS_QUERY = gql`
       image
       name
       species
-      type
       status
-      gender
       origin {
-        id
         name
-      }
-      location {
-        id
-        name
-      }
-      episode {
-        id
       }
     }
   }

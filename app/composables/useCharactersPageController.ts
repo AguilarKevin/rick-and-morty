@@ -3,15 +3,16 @@ import { useRickAndMortyApi } from '~/composables/useRickAndMortyApi'
 import { useCharactersQueryController } from '~/composables/characters/useCharactersQueryController'
 import { useFavoritesStore } from '~/stores/favorites'
 import { usePreferencesStore } from '~/stores/preferences'
-import type { Character, CharactersResponse } from '~/types/character'
+import type { CharacterListItem, CharactersResponse } from '~/types/character'
 import { buildVisiblePages } from '~/utils/pagination'
 
 export function useCharactersPageController() {
   const route = useRoute()
-  const { fetchCharacters, fetchCharactersByIds } = useRickAndMortyApi()
+  const { fetchCharacterById, fetchCharacters, fetchCharactersByIds } = useRickAndMortyApi()
   const favoritesStore = useFavoritesStore()
   const preferencesStore = usePreferencesStore()
   const { ids: favoriteIds } = storeToRefs(favoritesStore)
+  const prefetchedCharacterIds = new Set<string>()
 
   onMounted(() => {
     favoritesStore.loadFromStorage()
@@ -28,7 +29,7 @@ export function useCharactersPageController() {
     () => fetchCharacters(query.currentPage.value, query.search.value, query.status.value, query.species.value)
   )
 
-  const { data: favoritesData } = useAsyncData<Character[]>(
+  const { data: favoritesData } = useAsyncData<CharacterListItem[]>(
     () => `favorites:${query.favoritesOnly.value ? favoriteIds.value.join(',') : 'inactive'}`,
     async () => query.favoritesOnly.value ? fetchCharactersByIds(favoriteIds.value) : [],
     {
@@ -82,6 +83,17 @@ export function useCharactersPageController() {
     })
   }
 
+  const prefetchCharacter = (id: string) => {
+    if (prefetchedCharacterIds.has(id)) {
+      return
+    }
+
+    prefetchedCharacterIds.add(id)
+    fetchCharacterById(id).catch(() => {
+      prefetchedCharacterIds.delete(id)
+    })
+  }
+
   const favoriteIconClass = (id: string) => (
     favoritesStore.isFavorite(id) ? 'text-rose-500 [&_path]:fill-current' : ''
   )
@@ -98,6 +110,7 @@ export function useCharactersPageController() {
     hasActiveFilters: query.hasActiveFilters,
     layoutMode: query.layoutMode,
     openCharacter,
+    prefetchCharacter,
     pending,
     searchInput: query.searchInput,
     setLayoutMode: query.setLayoutMode,

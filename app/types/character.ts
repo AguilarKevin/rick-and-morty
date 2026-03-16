@@ -23,6 +23,15 @@ export interface Character {
   episode: CharacterEpisode[]
 }
 
+export interface CharacterListItem {
+  id: string
+  image: string
+  name: string
+  species: string
+  status: string
+  origin: CharacterLocation
+}
+
 export interface CharactersInfo {
   count: number
   pages: number
@@ -32,5 +41,5 @@ export interface CharactersInfo {
 
 export interface CharactersResponse {
   info: CharactersInfo
-  results: Character[]
+  results: CharacterListItem[]
 }

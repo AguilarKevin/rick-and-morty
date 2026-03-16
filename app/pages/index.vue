@@ -11,6 +11,7 @@ const {
   hasActiveFilters,
   layoutMode,
   openCharacter,
+  prefetchCharacter,
   pending,
   searchInput,
   setLayoutMode,
@@ -69,6 +70,7 @@ const {
         :is-favorite="favoritesStore.isFavorite"
         :favorite-icon-class="favoriteIconClass"
         @open-character="openCharacter"
+        @prefetch-character="prefetchCharacter"
         @toggle-favorite="favoritesStore.toggle"
       />
 
