@@ -31,8 +31,7 @@ onMounted(() => {
         return accumulator
       }, {})
     }
-  }
-  catch {
+  } catch {
     preservedBackQuery.value = {}
   }
 })
