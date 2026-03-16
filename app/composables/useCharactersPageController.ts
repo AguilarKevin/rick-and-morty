@@ -5,7 +5,7 @@ import { useCharactersQueryController } from '~/composables/characters/useCharac
 import { useFavoritesStore } from '~/stores/favorites'
 import { usePreferencesStore } from '~/stores/preferences'
 
-export async function useCharactersPageController() {
+export function useCharactersPageController() {
   const route = useRoute()
   const { fetchCharacters, fetchCharactersByIds } = useRickAndMortyApi()
   const favoritesStore = useFavoritesStore()
@@ -18,7 +18,7 @@ export async function useCharactersPageController() {
   })
 
   const query = useCharactersQueryController(preferencesStore)
-  const data = await useCharactersData({
+  const data = useCharactersData({
     currentPage: query.currentPage,
     search: query.search,
     status: query.status,

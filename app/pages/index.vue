@@ -19,7 +19,7 @@ const {
   totalCount,
   totalPages,
   visiblePages
-} = await useCharactersPageController()
+} = useCharactersPageController()
 </script>
 
 <template>

@@ -11,7 +11,7 @@ interface UseCharactersDataOptions {
   fetchCharactersByIds: (ids: string[]) => Promise<unknown[]>
 }
 
-export async function useCharactersData(options: UseCharactersDataOptions) {
+export function useCharactersData(options: UseCharactersDataOptions) {
   const {
     currentPage,
     search,
@@ -27,7 +27,7 @@ export async function useCharactersData(options: UseCharactersDataOptions) {
     data: charactersResponse,
     pending,
     error
-  } = await useAsyncData(
+  } = useAsyncData(
     () => `characters:${currentPage.value}:${search.value}:${status.value}:${species.value}`,
     () => fetchCharacters(currentPage.value, search.value, status.value, species.value) as Promise<{ info?: { count?: number, pages?: number }, results?: unknown[] }>,
     {
@@ -35,7 +35,7 @@ export async function useCharactersData(options: UseCharactersDataOptions) {
     }
   )
 
-  const { data: favoritesData } = await useAsyncData(
+  const { data: favoritesData } = useAsyncData(
     () => `favorites:${favoritesOnly.value ? favoriteIds.value.join(',') : 'inactive'}`,
     async () => favoritesOnly.value ? fetchCharactersByIds(favoriteIds.value) : [],
     {
