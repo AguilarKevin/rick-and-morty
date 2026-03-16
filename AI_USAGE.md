@@ -4,7 +4,7 @@ This document describes how AI tools were used during development. It is intende
 
 Summary
 - AI tools used: Windsurf
-- Scope: planning, implementation support, debugging, testing support, and review
+- Scope: targeted implementation assistance and validation support
 - Human ownership: all final decisions, code changes, and tests were made and verified by the author
 
 How AI Was Used
@@ -29,3 +29,4 @@ Change Log
 - 2026-03-14: Initial AI usage log created.
 - 2026-03-14: Added implementation support for app shell, GraphQL data composable, Pinia stores (favorites and preferences), characters table/profile pages, query-state back navigation, and Vitest unit tests.
 - 2026-03-14: Assisted with environment debugging and package manager migration from pnpm to npm due native dependency resolution issues.
+- 2026-03-15: Assisted with modular refactors for characters page composables and component test setup/validation.
