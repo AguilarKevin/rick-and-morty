@@ -1,8 +1,10 @@
 import type { Character, CharactersResponse } from '~/types/character'
 
 const API_URL = 'https://rickandmortyapi.com/graphql'
-const responseCache = new Map<string, unknown>()
+const CACHE_TTL_MS = 1000 * 60 * 2
+const responseCache = new Map<string, { value: unknown, expiresAt: number }>()
 const inFlightRequests = new Map<string, Promise<unknown>>()
+const RATE_LIMIT_RETRY_DELAYS = [800, 1600, 3000]
 
 interface GraphqlResponse<TData> {
   data?: TData
@@ -24,19 +26,38 @@ interface CharactersByIdsQueryData {
 const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 function isRateLimitError(error: unknown) {
+  if (error instanceof Error) {
+    return /429|too many requests/i.test(error.message)
+  }
+
   if (!error || typeof error !== 'object') {
     return false
   }
 
-  const candidate = error as { statusCode?: number, response?: { status?: number } }
-  return candidate.statusCode === 429 || candidate.response?.status === 429
+  const candidate = error as {
+    status?: number
+    statusCode?: number
+    response?: { status?: number }
+    message?: string
+  }
+
+  return candidate.status === 429
+    || candidate.statusCode === 429
+    || candidate.response?.status === 429
+    || /429|too many requests/i.test(candidate.message ?? '')
 }
 
 async function requestGraphql<TData>(query: string, variables: Record<string, unknown>) {
   const key = JSON.stringify({ query, variables })
+  const now = Date.now()
 
-  if (responseCache.has(key)) {
-    return responseCache.get(key) as TData
+  const cached = responseCache.get(key)
+  if (cached) {
+    if (cached.expiresAt > now) {
+      return cached.value as TData
+    }
+
+    responseCache.delete(key)
   }
 
   if (inFlightRequests.has(key)) {
@@ -44,7 +65,7 @@ async function requestGraphql<TData>(query: string, variables: Record<string, un
   }
 
   const request = (async () => {
-    for (let attempt = 0; attempt < 2; attempt++) {
+    for (let attempt = 0; attempt <= RATE_LIMIT_RETRY_DELAYS.length; attempt++) {
       try {
         const response = await $fetch<GraphqlResponse<TData>>(API_URL, {
           method: 'POST',
@@ -62,11 +83,14 @@ async function requestGraphql<TData>(query: string, variables: Record<string, un
           throw new Error('No data returned from API')
         }
 
-        responseCache.set(key, response.data)
+        responseCache.set(key, {
+          value: response.data,
+          expiresAt: Date.now() + CACHE_TTL_MS
+        })
         return response.data
       } catch (error) {
-        if (isRateLimitError(error) && attempt === 0) {
-          await wait(600)
+        if (isRateLimitError(error) && attempt < RATE_LIMIT_RETRY_DELAYS.length) {
+          await wait(RATE_LIMIT_RETRY_DELAYS[attempt]!)
           continue
         }
 
