@@ -2,6 +2,7 @@
 import { storeToRefs } from 'pinia'
 import { useRickAndMortyApi } from '~/composables/useRickAndMortyApi'
 import { useFavoritesStore } from '~/stores/favorites'
+import { usePreferencesStore } from '~/stores/preferences'
 import { debounce } from '~/utils/debounce'
 
 const route = useRoute()
@@ -9,10 +10,12 @@ const router = useRouter()
 
 const { fetchCharacters, fetchCharactersByIds } = useRickAndMortyApi()
 const favoritesStore = useFavoritesStore()
+const preferencesStore = usePreferencesStore()
 const { ids: favoriteIds } = storeToRefs(favoritesStore)
 
 onMounted(() => {
   favoritesStore.loadFromStorage()
+  preferencesStore.loadLayout()
 })
 
 const searchInput = ref(typeof route.query.search === 'string' ? route.query.search : '')
@@ -35,7 +38,13 @@ const status = computed(() => (
 ))
 
 const favoritesOnly = computed(() => route.query.favorites === '1')
-const layoutMode = computed(() => route.query.layout === 'grid' ? 'grid' : 'table')
+const layoutMode = computed<'table' | 'grid'>(() => {
+  if (route.query.layout === 'grid' || route.query.layout === 'table') {
+    return route.query.layout
+  }
+
+  return preferencesStore.layout
+})
 
 watch(search, (value) => {
   if (value !== searchInput.value) {
@@ -216,6 +225,7 @@ const clearFilters = () => {
 }
 
 const setLayoutMode = (mode: 'table' | 'grid') => {
+  preferencesStore.setLayout(mode)
   updateQuery({
     layout: mode
   })
