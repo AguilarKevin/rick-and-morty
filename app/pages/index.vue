@@ -65,6 +65,7 @@ const {
 
       <CharactersResults
         v-else-if="characters.length"
+        :key="layoutMode"
         :characters="characters"
         :layout-mode="layoutMode"
         :is-favorite="favoritesStore.isFavorite"

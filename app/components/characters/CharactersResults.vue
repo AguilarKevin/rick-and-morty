@@ -102,15 +102,18 @@ const favoriteIcon = (id: string) => (
     v-else
     class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
   >
-    <button
+    <article
       v-for="character in characters"
       :key="character.id"
-      type="button"
+      role="button"
+      tabindex="0"
       class="group relative overflow-hidden rounded-xl border border-neutral-200 bg-white p-4 text-left transition-all duration-200 hover:-translate-y-0.5 hover:border-cyan-400/70 hover:shadow-[0_0_0_1px_rgba(34,211,238,0.45),0_0_28px_rgba(16,185,129,0.35)] dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-cyan-300/70"
       @mouseenter="emit('prefetchCharacter', character.id)"
       @focus="emit('prefetchCharacter', character.id)"
       @touchstart.passive="emit('prefetchCharacter', character.id)"
       @click="emit('openCharacter', character.id)"
+      @keydown.enter.prevent="emit('openCharacter', character.id)"
+      @keydown.space.prevent="emit('openCharacter', character.id)"
     >
       <span class="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100 bg-[radial-gradient(circle_at_top_right,rgba(34,211,238,0.2),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(16,185,129,0.18),transparent_45%)]" />
       <div class="flex items-start justify-between gap-3">
@@ -155,6 +158,6 @@ const favoriteIcon = (id: string) => (
         <p>Status: {{ character.status }}</p>
         <p>Origin: {{ character.origin.name }}</p>
       </div>
-    </button>
+    </article>
   </div>
 </template>
