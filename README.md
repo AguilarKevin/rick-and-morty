@@ -1,58 +1,50 @@
 # Rick and Morty Directory
 
-A Nuxt 4 technical challenge project built with Vue 3 Composition API, Tailwind CSS, Pinia, GraphQL, and Vitest.
+Nuxt 4 app for browsing Rick and Morty characters, with filtering, favorites, and a profile view.
 
-## Tech Stack
+## Setup Instructions (Run Locally)
 
-- Nuxt 4 + Vue 3 (`<script setup>`)
-- Tailwind CSS
-- Pinia (global state + `localStorage` persistence)
-- Rick and Morty GraphQL API (`https://rickandmortyapi.com/graphql`)
-- Vitest
-
-## Implemented Features
-
-- Characters table page with:
-  - API pagination (20 per page)
-  - Debounced search by name
-  - Row navigation to character profile
-- Character profile page at `/character/:id` with:
-  - Full detail view
-  - Back navigation preserving page/search/favorites query state
-- Favorites:
-  - Toggle from table and profile
-  - Persisted in `localStorage` via Pinia
-  - Favorites-only filter view
-- Dark/light mode toggle persisted in `localStorage`
-- Unit tests:
-  - `debounce` utility
-  - favorites Pinia store logic
-
-## Setup
+### 1) Install dependencies
 
 ```bash
 npm install
 ```
 
-## Development
+### 2) (Optional) Fetch latest GraphQL schema snapshot
+
+```bash
+npm run graphql:schema:fetch
+```
+
+This stores a local schema at `graphql/schema.graphql`.
+
+### 3) Start development server
 
 ```bash
 npm run dev
 ```
 
-Runs at `http://localhost:3000`.
+App runs at `http://localhost:3000`.
 
-## Quality Checks
+### 4) Run checks
 
 ```bash
-npm run test
 npm run lint
 npm run typecheck
+npm run test
 ```
 
-## Build
+## Approach, Decisions, and Tradeoffs
 
-```bash
-npm run build
-npm run preview
-```
+- Used Nuxt 4 + Vue 3 Composition API with `<script setup>` for a simple, modern SPA-style architecture.
+- Applied a container/presentational split on the characters page:
+  - container (`app/pages/index.vue`) owns routing, fetch, and state
+  - presentational components in `app/components/characters/*` handle UI and emits
+- Used GraphQL AST documents in `app/graphql/queries.ts` instead of raw inline strings to keep operations centralized and easier to maintain.
+- Added API request protections in the GraphQL composable:
+  - in-flight request deduplication
+  - TTL in-memory cache
+  - retry/backoff for `429` responses
+- Image strategy tradeoff:
+  - kept optimized image usage scoped to the profile page
+  - used standard images in high-volume list views to reduce request pressure and avoid rate-limit issues.
